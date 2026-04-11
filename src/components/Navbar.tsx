@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { Menu, X } from "lucide-react";
-
-const INSTAGRAM_URL = "https://www.instagram.com/psicologoarnaldoantunes";
+import { WHATSAPP_URL } from "@/lib/constants";
 
 const links = [
   { label: "Início", href: "#inicio" },
@@ -31,7 +30,6 @@ export default function Navbar() {
           Arnaldo Antunes
         </a>
 
-        {/* Desktop */}
         <div className="hidden md:flex items-center gap-8">
           {links.map((l) => (
             <a
@@ -43,7 +41,7 @@ export default function Navbar() {
             </a>
           ))}
           <a
-            href={INSTAGRAM_URL}
+            href={WHATSAPP_URL}
             target="_blank"
             rel="noopener noreferrer"
             className="bg-primary text-primary-foreground px-5 py-2.5 rounded-full text-sm font-medium hover:bg-primary-dark transition-colors"
@@ -52,7 +50,6 @@ export default function Navbar() {
           </a>
         </div>
 
-        {/* Mobile toggle */}
         <button
           className="md:hidden text-foreground"
           onClick={() => setOpen(!open)}
@@ -62,7 +59,6 @@ export default function Navbar() {
         </button>
       </div>
 
-      {/* Mobile menu */}
       {open && (
         <div className="md:hidden bg-card/95 backdrop-blur-md border-t border-border px-6 pb-6">
           {links.map((l) => (
@@ -76,7 +72,7 @@ export default function Navbar() {
             </a>
           ))}
           <a
-            href={INSTAGRAM_URL}
+            href={WHATSAPP_URL}
             target="_blank"
             rel="noopener noreferrer"
             className="mt-2 block text-center bg-primary text-primary-foreground px-5 py-2.5 rounded-full text-sm font-medium"

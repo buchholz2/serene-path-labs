@@ -1,6 +1,5 @@
 import { Instagram } from "lucide-react";
-
-const INSTAGRAM_URL = "https://www.instagram.com/psicologoarnaldoantunes";
+import { INSTAGRAM_URL } from "@/lib/constants";
 
 export default function Footer() {
   return (
@@ -11,7 +10,7 @@ export default function Footer() {
             <p className="font-serif text-xl font-semibold text-background mb-1">
               Arnaldo Antunes
             </p>
-            <p className="text-sm">Psicólogo — CRP XX/XXXXX</p>
+            <p className="text-sm">Psicólogo — CRP 08/37610</p>
           </div>
 
           <div className="flex items-center gap-6">
