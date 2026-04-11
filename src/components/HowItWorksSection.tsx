@@ -44,11 +44,7 @@ export default function HowItWorksSection() {
           </p>
         </div>
 
-        {/* Timeline vertical on mobile, horizontal on desktop */}
         <div className="relative">
-          {/* Horizontal line (desktop) */}
-          <div className="hidden md:block absolute top-12 left-[15%] right-[15%] h-px bg-gradient-to-r from-transparent via-primary/30 to-transparent" />
-
           <div className="grid md:grid-cols-3 gap-12 md:gap-6">
             {steps.map((step, i) => (
               <StepCard key={step.title} step={step} index={i} />

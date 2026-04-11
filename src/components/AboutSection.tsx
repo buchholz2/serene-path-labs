@@ -42,7 +42,7 @@ export default function AboutSection() {
               Atuo com a <strong className="text-foreground">Terapia Cognitivo-Comportamental (TCC)</strong> e
               a <strong className="text-foreground">Análise do Comportamento Aplicada (ABA)</strong>, com
               foco em atendimentos online, ajudando pessoas a lidarem com desafios emocionais do dia a dia
-              de forma prática e eficaz.
+              de forma prática e eficaz — atendendo pacientes em todo o Brasil e também no exterior.
             </p>
             <p>
               Acredito em um atendimento humanizado, individualizado e focado em resultados reais,
