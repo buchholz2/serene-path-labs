@@ -1,6 +1,5 @@
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
-
-const INSTAGRAM_URL = "https://www.instagram.com/psicologoarnaldoantunes";
+import { WHATSAPP_URL } from "@/lib/constants";
 
 export default function CtaSection() {
   const { ref, isVisible } = useScrollAnimation();
@@ -25,12 +24,12 @@ export default function CtaSection() {
           Agende sua sessão online agora.
         </p>
         <a
-          href={INSTAGRAM_URL}
+          href={WHATSAPP_URL}
           target="_blank"
           rel="noopener noreferrer"
           className="inline-block bg-primary text-primary-foreground px-10 py-4 rounded-full text-lg font-medium hover:bg-primary-dark transition-colors shadow-lg shadow-primary/25"
         >
-          📅 Agende sua Sessão
+          Agende sua Sessão
         </a>
       </div>
     </section>
