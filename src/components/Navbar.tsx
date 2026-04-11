@@ -26,8 +26,9 @@ export default function Navbar() {
       }`}
     >
       <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
-        <a href="#inicio" className="font-serif text-xl font-semibold text-foreground">
-          Arnaldo Antunes
+        <a href="#inicio" className="flex items-center gap-2">
+          <img src="/logo-icon.png" alt="Logo" className="w-9 h-9 object-contain" />
+          <span className="font-serif text-xl font-semibold text-foreground">Arnaldo Antunes</span>
         </a>
 
         <div className="hidden md:flex items-center gap-8">
