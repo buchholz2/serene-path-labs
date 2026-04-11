@@ -72,9 +72,12 @@ function StepCard({ step, index }: { step: typeof steps[number]; index: number }
       style={{ transitionDelay: `${index * 150}ms` }}
     >
       {/* Icon circle */}
-      <div className="relative mb-6">
-        <div className="w-24 h-24 rounded-full bg-gradient-to-br from-primary/15 to-secondary flex items-center justify-center shadow-md">
-          <Icon className="w-10 h-10 text-primary-dark" strokeWidth={1.5} />
+      <div className="relative mb-6 z-20">
+        <div className="w-24 h-24 rounded-full bg-card shadow-md flex items-center justify-center">
+          <div className="w-20 h-20 rounded-full bg-gradient-to-br from-primary/15 to-secondary flex items-center justify-center">
+            <Icon className="w-10 h-10 text-primary-dark" strokeWidth={1.5} />
+          </div>
+        </div>
         </div>
         {/* Step number badge */}
         <span className="absolute -top-1 -right-1 w-7 h-7 rounded-full bg-primary text-primary-foreground text-xs font-bold flex items-center justify-center shadow">
