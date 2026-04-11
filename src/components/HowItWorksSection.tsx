@@ -78,7 +78,6 @@ function StepCard({ step, index }: { step: typeof steps[number]; index: number }
             <Icon className="w-10 h-10 text-primary-dark" strokeWidth={1.5} />
           </div>
         </div>
-        </div>
         {/* Step number badge */}
         <span className="absolute -top-1 -right-1 w-7 h-7 rounded-full bg-primary text-primary-foreground text-xs font-bold flex items-center justify-center shadow">
           {index + 1}
