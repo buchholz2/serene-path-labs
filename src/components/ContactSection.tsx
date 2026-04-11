@@ -1,25 +1,28 @@
 import { useState } from "react";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
+import { useLanguage } from "@/i18n/LanguageContext";
 import { Send, CheckCircle } from "lucide-react";
+import type { TranslationKey } from "@/i18n/translations";
 
-const serviceOptions = [
-  "Ansiedade",
-  "Depressão",
-  "Baixa autoestima",
-  "Relacionamentos",
-  "Desenvolvimento pessoal",
-  "Estresse e sobrecarga",
-  "Outro",
+const serviceOptionKeys: TranslationKey[] = [
+  "option.anxiety",
+  "option.depression",
+  "option.selfEsteem",
+  "option.relationships",
+  "option.personalDev",
+  "option.stress",
+  "option.other",
 ];
 
-const timeOptions = [
-  "Manhã (8h - 12h)",
-  "Tarde (13h - 17h)",
-  "Noite (18h - 21h)",
+const timeOptionKeys: TranslationKey[] = [
+  "time.morning",
+  "time.afternoon",
+  "time.evening",
 ];
 
 export default function ContactSection() {
   const { ref, isVisible } = useScrollAnimation();
+  const { t } = useLanguage();
   const [submitted, setSubmitted] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
@@ -72,17 +75,16 @@ export default function ContactSection() {
         <div className="max-w-2xl mx-auto px-6 text-center relative z-10">
           <CheckCircle className="w-16 h-16 text-primary mx-auto mb-6" />
           <h2 className="font-serif text-3xl font-bold text-foreground mb-4">
-            Mensagem preparada!
+            {t("contact.successTitle")}
           </h2>
           <p className="text-muted-foreground text-lg mb-6">
-            Seu aplicativo de email deve ter aberto com os dados preenchidos. 
-            Caso não tenha aberto, entre em contato pelo WhatsApp: (41) 99168-1082.
+            {t("contact.successMsg")}
           </p>
           <button
             onClick={() => setSubmitted(false)}
             className="text-primary-dark underline hover:text-foreground transition-colors"
           >
-            Enviar nova mensagem
+            {t("contact.newMessage")}
           </button>
         </div>
       </section>
@@ -103,32 +105,31 @@ export default function ContactSection() {
       >
         <div className="text-center mb-12">
           <p className="text-primary-dark font-medium text-sm tracking-widest uppercase mb-3">
-            Contato
+            {t("contact.label")}
           </p>
           <h2 className="font-serif text-3xl sm:text-4xl font-bold text-foreground mb-4">
-            Agende sua sessão
+            {t("contact.title")}
           </h2>
           <p className="text-muted-foreground max-w-xl mx-auto">
-            Preencha o formulário abaixo e entrarei em contato para confirmar o agendamento.
+            {t("contact.subtitle")}
           </p>
         </div>
 
         <form onSubmit={handleSubmit} className="bg-card rounded-3xl p-8 md:p-10 shadow-lg border border-border space-y-6">
-          {/* Name & Email */}
           <div className="grid sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-foreground mb-2">Nome completo *</label>
+              <label className="block text-sm font-medium text-foreground mb-2">{t("contact.name")} *</label>
               <input
                 type="text"
                 required
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                 className="w-full px-4 py-3 rounded-xl border border-border bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all"
-                placeholder="Seu nome"
+                placeholder={t("contact.namePlaceholder")}
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-foreground mb-2">Email *</label>
+              <label className="block text-sm font-medium text-foreground mb-2">{t("contact.email")} *</label>
               <input
                 type="email"
                 required
@@ -140,9 +141,8 @@ export default function ContactSection() {
             </div>
           </div>
 
-          {/* Phone */}
           <div>
-            <label className="block text-sm font-medium text-foreground mb-2">Telefone / WhatsApp</label>
+            <label className="block text-sm font-medium text-foreground mb-2">{t("contact.phone")}</label>
             <input
               type="tel"
               value={formData.phone}
@@ -152,77 +152,79 @@ export default function ContactSection() {
             />
           </div>
 
-          {/* Services */}
           <div>
             <label className="block text-sm font-medium text-foreground mb-3">
-              Em que posso te ajudar? <span className="text-muted-foreground font-normal">(selecione uma ou mais opções)</span>
+              {t("contact.helpLabel")} <span className="text-muted-foreground font-normal">{t("contact.helpHint")}</span>
             </label>
             <div className="flex flex-wrap gap-2">
-              {serviceOptions.map((s) => (
-                <button
-                  key={s}
-                  type="button"
-                  onClick={() => toggleService(s)}
-                  className={`px-4 py-2 rounded-full text-sm font-medium border transition-all ${
-                    formData.services.includes(s)
-                      ? "bg-primary text-primary-foreground border-primary"
-                      : "bg-background text-muted-foreground border-border hover:border-primary/50"
-                  }`}
-                >
-                  {s}
-                </button>
-              ))}
+              {serviceOptionKeys.map((key) => {
+                const label = t(key);
+                return (
+                  <button
+                    key={key}
+                    type="button"
+                    onClick={() => toggleService(label)}
+                    className={`px-4 py-2 rounded-full text-sm font-medium border transition-all ${
+                      formData.services.includes(label)
+                        ? "bg-primary text-primary-foreground border-primary"
+                        : "bg-background text-muted-foreground border-border hover:border-primary/50"
+                    }`}
+                  >
+                    {label}
+                  </button>
+                );
+              })}
             </div>
           </div>
 
-          {/* Preferred times */}
           <div>
             <label className="block text-sm font-medium text-foreground mb-3">
-              Horários de preferência <span className="text-muted-foreground font-normal">(selecione os que funcionam para você)</span>
+              {t("contact.timesLabel")} <span className="text-muted-foreground font-normal">{t("contact.timesHint")}</span>
             </label>
             <div className="flex flex-wrap gap-2">
-              {timeOptions.map((t) => (
-                <button
-                  key={t}
-                  type="button"
-                  onClick={() => toggleTime(t)}
-                  className={`px-4 py-2 rounded-full text-sm font-medium border transition-all ${
-                    formData.preferredTimes.includes(t)
-                      ? "bg-primary text-primary-foreground border-primary"
-                      : "bg-background text-muted-foreground border-border hover:border-primary/50"
-                  }`}
-                >
-                  {t}
-                </button>
-              ))}
+              {timeOptionKeys.map((key) => {
+                const label = t(key);
+                return (
+                  <button
+                    key={key}
+                    type="button"
+                    onClick={() => toggleTime(label)}
+                    className={`px-4 py-2 rounded-full text-sm font-medium border transition-all ${
+                      formData.preferredTimes.includes(label)
+                        ? "bg-primary text-primary-foreground border-primary"
+                        : "bg-background text-muted-foreground border-border hover:border-primary/50"
+                    }`}
+                  >
+                    {label}
+                  </button>
+                );
+              })}
             </div>
           </div>
 
-          {/* Message */}
           <div>
             <label className="block text-sm font-medium text-foreground mb-2">
-              Mensagem adicional <span className="text-muted-foreground font-normal">(opcional)</span>
+              {t("contact.messageLabel")} <span className="text-muted-foreground font-normal">{t("contact.messageOptional")}</span>
             </label>
             <textarea
               value={formData.message}
               onChange={(e) => setFormData({ ...formData, message: e.target.value })}
               rows={4}
               className="w-full px-4 py-3 rounded-xl border border-border bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all resize-none"
-              placeholder="Conte um pouco sobre o que você está buscando..."
+              placeholder={t("contact.messagePlaceholder")}
             />
           </div>
 
-          {/* Submit */}
           <button
             type="submit"
             className="w-full bg-primary text-primary-foreground py-4 rounded-full font-medium text-lg hover:bg-primary-dark transition-colors shadow-lg shadow-primary/20 flex items-center justify-center gap-2"
           >
             <Send className="w-5 h-5" />
-            Enviar Solicitação
+            {t("contact.submit")}
           </button>
 
           <p className="text-center text-xs text-muted-foreground">
-            Ou entre em contato pelo WhatsApp: <a href="https://wa.me/5541991681082" target="_blank" rel="noopener noreferrer" className="text-primary-dark hover:underline">(41) 99168-1082</a>
+            {t("contact.whatsappAlt")} <a href="https://wa.me/5541991681082" target="_blank" rel="noopener noreferrer" className="text-primary-dark hover:underline">(41) 99168-1082</a>
           </p>
         </form>
       </div>
