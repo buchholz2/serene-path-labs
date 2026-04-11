@@ -1,10 +1,11 @@
-import { createContext, useContext, useState, useCallback, type ReactNode } from "react";
+import { createContext, useContext, useState, useCallback, useRef, type ReactNode } from "react";
 import { translations, type Language, type TranslationKey } from "./translations";
 
 interface LanguageContextType {
   lang: Language;
   setLang: (lang: Language) => void;
   t: (key: TranslationKey) => string;
+  transitioning: boolean;
 }
 
 const LanguageContext = createContext<LanguageContextType | null>(null);
@@ -14,10 +15,20 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
     const saved = localStorage.getItem("lang");
     return saved === "en" ? "en" : "pt";
   });
+  const [transitioning, setTransitioning] = useState(false);
+  const timeoutRef = useRef<number>();
 
   const setLang = useCallback((l: Language) => {
-    setLangState(l);
-    localStorage.setItem("lang", l);
+    if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    setTransitioning(true);
+    // Fade out, swap text, fade in
+    timeoutRef.current = window.setTimeout(() => {
+      setLangState(l);
+      localStorage.setItem("lang", l);
+      timeoutRef.current = window.setTimeout(() => {
+        setTransitioning(false);
+      }, 50);
+    }, 200);
   }, []);
 
   const t = useCallback(
@@ -26,8 +37,10 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
   );
 
   return (
-    <LanguageContext.Provider value={{ lang, setLang, t }}>
-      {children}
+    <LanguageContext.Provider value={{ lang, setLang, t, transitioning }}>
+      <div className={`transition-opacity duration-200 ${transitioning ? "opacity-0" : "opacity-100"}`}>
+        {children}
+      </div>
     </LanguageContext.Provider>
   );
 }
