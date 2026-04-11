@@ -1,4 +1,23 @@
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
+import { GraduationCap, Globe, Award } from "lucide-react";
+
+const highlights = [
+  {
+    icon: GraduationCap,
+    title: "Formação Acadêmica",
+    text: "Graduado em Psicologia (UNAMA) e Especialista em Intervenção ABA pelo CBI of Miami (EUA)",
+  },
+  {
+    icon: Award,
+    title: "Experiência Clínica",
+    text: "Atuação em clínicas de referência com TCC, ABA e atendimento a diversas demandas emocionais",
+  },
+  {
+    icon: Globe,
+    title: "Atendimento Internacional",
+    text: "Atendo pacientes no Brasil e no exterior, com sessões em português e inglês",
+  },
+];
 
 export default function AboutSection() {
   const { ref, isVisible } = useScrollAnimation();
@@ -32,22 +51,36 @@ export default function AboutSection() {
           <h2 className="font-serif text-3xl sm:text-4xl font-bold text-foreground mb-6">
             Um espaço acolhedor para você
           </h2>
-          <div className="space-y-4 text-muted-foreground leading-relaxed">
+          <div className="space-y-4 text-muted-foreground leading-relaxed mb-8">
             <p>
-              Cuidar da saúde emocional é um passo essencial para viver com mais equilíbrio,
-              clareza e bem-estar. Meu trabalho é oferecer um espaço acolhedor, seguro e baseado
-              na ciência, onde você possa compreender melhor seus pensamentos, emoções e comportamentos.
+              Sou psicólogo graduado pela <strong className="text-foreground">Universidade da Amazônia (UNAMA)</strong> e 
+              especialista em <strong className="text-foreground">Intervenção ABA para Autismo e Deficiência Intelectual</strong> pelo 
+              CBI of Miami (EUA). Atuo com a <strong className="text-foreground">Terapia Cognitivo-Comportamental (TCC)</strong> e 
+              a <strong className="text-foreground">Análise do Comportamento Aplicada (ABA)</strong>.
             </p>
             <p>
-              Atuo com a <strong className="text-foreground">Terapia Cognitivo-Comportamental (TCC)</strong> e
-              a <strong className="text-foreground">Análise do Comportamento Aplicada (ABA)</strong>, com
-              foco em atendimentos online, ajudando pessoas a lidarem com desafios emocionais do dia a dia
-              de forma prática e eficaz — atendendo pacientes em todo o Brasil e também no exterior.
+              Com experiência em clínicas de referência e atendimento a diversas demandas emocionais, 
+              ofereço um espaço terapêutico seguro, humanizado e baseado em evidências científicas — 
+              atendendo pacientes em todo o Brasil e também no exterior, com sessões em português e inglês.
             </p>
-            <p>
-              Acredito em um atendimento humanizado, individualizado e focado em resultados reais,
-              respeitando sua história e seu tempo.
-            </p>
+          </div>
+
+          {/* Highlights */}
+          <div className="space-y-4">
+            {highlights.map((h) => {
+              const Icon = h.icon;
+              return (
+                <div key={h.title} className="flex items-start gap-4">
+                  <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <Icon className="w-5 h-5 text-primary-dark" strokeWidth={1.5} />
+                  </div>
+                  <div>
+                    <p className="font-medium text-foreground text-sm">{h.title}</p>
+                    <p className="text-muted-foreground text-sm">{h.text}</p>
+                  </div>
+                </div>
+              );
+            })}
           </div>
         </div>
       </div>
