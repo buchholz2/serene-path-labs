@@ -1,17 +1,19 @@
 import { useState, useEffect } from "react";
 import { Menu, X } from "lucide-react";
+import { useLanguage } from "@/i18n/LanguageContext";
 
-const links = [
-  { label: "Início", href: "#inicio" },
-  { label: "Sobre", href: "#sobre" },
-  { label: "Serviços", href: "#servicos" },
-  { label: "Como Funciona", href: "#como-funciona" },
-  { label: "Contato", href: "#contato" },
+const linkKeys = [
+  { key: "nav.home" as const, href: "#inicio" },
+  { key: "nav.about" as const, href: "#sobre" },
+  { key: "nav.services" as const, href: "#servicos" },
+  { key: "nav.howItWorks" as const, href: "#como-funciona" },
+  { key: "nav.contact" as const, href: "#contato" },
 ];
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
+  const { lang, setLang, t } = useLanguage();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40);
@@ -32,20 +34,41 @@ export default function Navbar() {
         </a>
 
         <div className="hidden md:flex items-center gap-8">
-          {links.map((l) => (
+          {linkKeys.map((l) => (
             <a
               key={l.href}
               href={l.href}
               className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
             >
-              {l.label}
+              {t(l.key)}
             </a>
           ))}
+
+          {/* Language selector */}
+          <div className="flex items-center gap-1 border border-border rounded-full px-1 py-0.5">
+            <button
+              onClick={() => setLang("pt")}
+              className={`text-xs font-medium px-2.5 py-1 rounded-full transition-colors ${
+                lang === "pt" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              PT
+            </button>
+            <button
+              onClick={() => setLang("en")}
+              className={`text-xs font-medium px-2.5 py-1 rounded-full transition-colors ${
+                lang === "en" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              EN
+            </button>
+          </div>
+
           <a
             href="#contato"
             className="bg-primary text-primary-foreground px-5 py-2.5 rounded-full text-sm font-medium hover:bg-primary-dark transition-colors"
           >
-            Agende sua Sessão
+            {t("nav.cta")}
           </a>
         </div>
 
@@ -60,22 +83,41 @@ export default function Navbar() {
 
       {open && (
         <div className="md:hidden bg-card/95 backdrop-blur-md border-t border-border px-6 pb-6">
-          {links.map((l) => (
+          {linkKeys.map((l) => (
             <a
               key={l.href}
               href={l.href}
               onClick={() => setOpen(false)}
               className="block py-3 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
             >
-              {l.label}
+              {t(l.key)}
             </a>
           ))}
+          {/* Mobile language selector */}
+          <div className="flex items-center gap-2 py-3">
+            <button
+              onClick={() => setLang("pt")}
+              className={`text-xs font-medium px-3 py-1.5 rounded-full border transition-colors ${
+                lang === "pt" ? "bg-primary text-primary-foreground border-primary" : "text-muted-foreground border-border"
+              }`}
+            >
+              PT
+            </button>
+            <button
+              onClick={() => setLang("en")}
+              className={`text-xs font-medium px-3 py-1.5 rounded-full border transition-colors ${
+                lang === "en" ? "bg-primary text-primary-foreground border-primary" : "text-muted-foreground border-border"
+              }`}
+            >
+              EN
+            </button>
+          </div>
           <a
             href="#contato"
             onClick={() => setOpen(false)}
             className="mt-2 block text-center bg-primary text-primary-foreground px-5 py-2.5 rounded-full text-sm font-medium"
           >
-            Agende sua Sessão
+            {t("nav.cta")}
           </a>
         </div>
       )}

@@ -1,7 +1,10 @@
 import { Instagram } from "lucide-react";
 import { INSTAGRAM_URL, WHATSAPP_URL } from "@/lib/constants";
+import { useLanguage } from "@/i18n/LanguageContext";
 
 export default function Footer() {
+  const { t } = useLanguage();
+
   return (
     <footer className="bg-foreground text-background/80 py-12">
       <div className="max-w-6xl mx-auto px-6">
@@ -38,7 +41,7 @@ export default function Footer() {
         </div>
 
         <div className="mt-8 pt-6 border-t border-background/10 text-center text-xs text-background/50">
-          © {new Date().getFullYear()} Arnaldo Antunes — Todos os direitos reservados.
+          © {new Date().getFullYear()} Arnaldo Antunes — {t("footer.rights")}
         </div>
       </div>
     </footer>

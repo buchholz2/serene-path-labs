@@ -1,6 +1,8 @@
-import { WHATSAPP_URL } from "@/lib/constants";
+import { useLanguage } from "@/i18n/LanguageContext";
 
 export default function HeroSection() {
+  const { t } = useLanguage();
+
   return (
     <section id="inicio" className="relative min-h-screen flex items-center overflow-hidden">
       <div className="absolute -top-20 -right-32 w-[500px] h-[500px] bg-primary/10 clip-blob-2 blur-sm" />
@@ -9,34 +11,32 @@ export default function HeroSection() {
       <div className="max-w-6xl mx-auto px-6 pt-24 pb-16 grid md:grid-cols-2 gap-12 items-center relative z-10">
         <div className="order-2 md:order-1">
           <p className="text-primary-dark font-medium text-sm tracking-widest uppercase mb-4">
-            Psicólogo Clínico — CRP 08/37610
+            {t("hero.subtitle")}
           </p>
           <h1 className="font-serif text-4xl sm:text-5xl lg:text-6xl font-bold text-foreground leading-tight mb-6">
             Arnaldo<br />Antunes
           </h1>
           <p className="text-muted-foreground text-lg leading-relaxed mb-8 max-w-md">
-            Terapia Cognitivo-Comportamental (TCC) e Análise do Comportamento Aplicada (ABA).
-            Cuide da sua saúde emocional com atendimento online humanizado.
+            {t("hero.description")}
           </p>
           <div className="flex flex-wrap gap-4">
             <a
               href="#contato"
               className="bg-primary text-primary-foreground px-8 py-3.5 rounded-full font-medium hover:bg-primary-dark transition-colors shadow-lg shadow-primary/20"
             >
-              Agende sua Sessão
+              {t("hero.cta")}
             </a>
             <a
               href="#servicos"
               className="border-2 border-primary text-primary-dark px-8 py-3.5 rounded-full font-medium hover:bg-primary/10 transition-colors"
             >
-              Conheça os Serviços
+              {t("hero.services")}
             </a>
           </div>
         </div>
 
         <div className="order-1 md:order-2 flex justify-center">
           <div className="relative w-full max-w-md">
-            {/* Decorative blob behind */}
             <div className="absolute -inset-4 bg-primary/15 rounded-[40%_60%_55%_45%/50%_40%_60%_50%]" />
             <img
               src="/hero-banner.png"
