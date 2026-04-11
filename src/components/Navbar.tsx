@@ -1,12 +1,12 @@
 import { useState, useEffect } from "react";
 import { Menu, X } from "lucide-react";
-import { WHATSAPP_URL } from "@/lib/constants";
 
 const links = [
   { label: "Início", href: "#inicio" },
   { label: "Sobre", href: "#sobre" },
   { label: "Serviços", href: "#servicos" },
   { label: "Como Funciona", href: "#como-funciona" },
+  { label: "Contato", href: "#contato" },
 ];
 
 export default function Navbar() {
@@ -41,9 +41,7 @@ export default function Navbar() {
             </a>
           ))}
           <a
-            href={WHATSAPP_URL}
-            target="_blank"
-            rel="noopener noreferrer"
+            href="#contato"
             className="bg-primary text-primary-foreground px-5 py-2.5 rounded-full text-sm font-medium hover:bg-primary-dark transition-colors"
           >
             Agende sua Sessão
@@ -72,9 +70,8 @@ export default function Navbar() {
             </a>
           ))}
           <a
-            href={WHATSAPP_URL}
-            target="_blank"
-            rel="noopener noreferrer"
+            href="#contato"
+            onClick={() => setOpen(false)}
             className="mt-2 block text-center bg-primary text-primary-foreground px-5 py-2.5 rounded-full text-sm font-medium"
           >
             Agende sua Sessão
