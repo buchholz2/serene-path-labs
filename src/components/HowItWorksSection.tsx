@@ -45,7 +45,10 @@ export default function HowItWorksSection() {
         </div>
 
         <div className="relative">
-          <div className="grid md:grid-cols-3 gap-12 md:gap-6">
+          {/* Connecting line behind the icons */}
+          <div className="hidden md:block absolute top-12 left-[15%] right-[15%] h-px bg-primary/20 z-0" />
+
+          <div className="grid md:grid-cols-3 gap-12 md:gap-6 relative z-10">
             {steps.map((step, i) => (
               <StepCard key={step.title} step={step} index={i} />
             ))}
