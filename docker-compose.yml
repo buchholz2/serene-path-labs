@@ -1,0 +1,12 @@
+services:
+  arnaldo-web:
+    container_name: site-arnaldo-web
+    build: .
+    image: site-arnaldo-web:latest
+    restart: always
+    networks:
+      - nginxproxyman
+
+networks:
+  nginxproxyman:
+    external: true
