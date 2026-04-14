@@ -10,7 +10,7 @@ DATE=$(date +"%Y-%m-%d %H:%M:%S")
 
 # --- Variaveis de Destino (VPS Oracle) ---
 VPS_USER="deployer"
-VPS_IP="146.235.33.212"
+VPS_IP="10.0.50.1"
 VPS_DESTINATION="/opt/site-arnaldo-antunes/"
 
 # --- Funcoes de Log ---
@@ -19,6 +19,11 @@ log_message() {
 }
 
 # --- 1. Puxar o Código Mais Recente ---
+log_message "Sincronizando alteracoes locais com GitHub..."
+git add .
+git commit -m "Auto-deploy: $DATE"
+git push origin main
+log_message "GitHub atualizado."
 log_message "Iniciando Git Pull..."
 GIT_OUTPUT=$(git pull origin main 2>&1)
 log_message "$GIT_OUTPUT"
@@ -56,8 +61,9 @@ fi
 log_message "Iniciando transferencia para a VPS Oracle..."
 
 TRANSFER_SUCCESS=true
-
-# Garante que o diretório exista e envia os arquivos
+# Garante que a rede e a pasta existam na Oracle
+ssh ${VPS_USER}@${VPS_IP} "docker network create nginxproxyman 2>/dev/null; mkdir -p ${VPS_DESTINATION}"
+# Garante que o diretorio exista e envia os arquivos
 ssh ${VPS_USER}@${VPS_IP} "mkdir -p ${VPS_DESTINATION}"
 scp docker-compose.yml website_image.tar ${VPS_USER}@${VPS_IP}:${VPS_DESTINATION} || TRANSFER_SUCCESS=false
 
