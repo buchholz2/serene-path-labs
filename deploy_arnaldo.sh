@@ -69,11 +69,19 @@ fi
 log_message "Iniciando transferencia para a VPS Oracle..."
 
 TRANSFER_SUCCESS=true
+
+# Garante que o arquivo .env exista localmente antes do deploy
+if [ ! -f ".env" ]; then
+    log_message "ERRO FATAL: arquivo .env nao encontrado no projeto."
+    log_message "Crie o .env com RESEND_API_KEY, MAIL_TO e MAIL_FROM antes de executar o deploy."
+    exit 1
+fi
+
 # Garante que a rede e a pasta existam na Oracle
 ssh -i ~/.ssh/id_rsa_oracle ${VPS_USER}@${VPS_IP} "docker network create nginxproxyman 2>/dev/null; mkdir -p ${VPS_DESTINATION}"
 # Garante que o diretorio exista e envia os arquivos
 ssh -i ~/.ssh/id_rsa_oracle ${VPS_USER}@${VPS_IP} "mkdir -p ${VPS_DESTINATION}"
-scp -i ~/.ssh/id_rsa_oracle docker-compose.yml website_image.tar api_image.tar ${VPS_USER}@${VPS_IP}:${VPS_DESTINATION} || TRANSFER_SUCCESS=false
+scp -i ~/.ssh/id_rsa_oracle docker-compose.yml .env website_image.tar api_image.tar ${VPS_USER}@${VPS_IP}:${VPS_DESTINATION} || TRANSFER_SUCCESS=false
 
 if ! $TRANSFER_SUCCESS; then
     log_message "ERRO FATAL: Falha na transferencia SCP."
@@ -90,7 +98,7 @@ DEPLOY_COMMAND="
   echo 'Carregando imagem da API...' &&
   docker load -i api_image.tar &&
   echo 'Subindo container...' &&
-  docker compose up -d --force-recreate &&
+  docker compose --env-file .env up -d --force-recreate &&
   echo 'Limpando arquivos .tar...' &&
   rm website_image.tar api_image.tar &&
   echo 'Deploy remoto concluido.'
