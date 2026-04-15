@@ -1,0 +1,11 @@
+.git
+.gitignore
+node_modules
+dist
+release
+*.log
+website_image.tar
+api_image.tar
+.env
+.env.*
+!.env.example

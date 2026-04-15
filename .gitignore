@@ -27,3 +27,4 @@ api_image.tar
 .env
 .env.*
 !.env.example
+release/

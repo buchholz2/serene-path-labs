@@ -32,6 +32,12 @@ API local: `http://localhost:3001`
 `npm run dev` sobe frontend + API juntos.  
 Se quiser subir separado, use `npm run dev:web` e `npm run dev:api`.
 
+## Deploy Externo (Servidor + Dominio)
+
+Use o guia completo:
+
+- `DEPLOY_EXTERNAL_SERVER.md`
+
 ### Configuracao da API de email
 
 1. Crie um arquivo `.env` na raiz (pode copiar de `.env.example`).
@@ -57,6 +63,9 @@ docker compose up -d --build
 - `npm run dev:web`: inicia apenas o frontend
 - `npm run dev:api`: inicia a API de contato local em modo watch
 - `npm run start:api`: inicia a API de contato em producao
+- `npm run server:up`: sobe stack de servidor (`docker-compose.server.yml`)
+- `npm run server:down`: derruba stack de servidor
+- `npm run bundle:server`: gera pacote `.tar.gz` em `release/`
 - `npm run build`: gera build de producao
 - `npm run build:dev`: gera build no modo development
 - `npm run preview`: visualiza o build localmente
