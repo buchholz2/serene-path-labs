@@ -62,7 +62,7 @@ log_message "Iniciando transferencia para a VPS Oracle..."
 
 TRANSFER_SUCCESS=true
 # Garante que a rede e a pasta existam na Oracle
-ssh-i ~/.ssh/id_rsa_oracle ${VPS_USER}@${VPS_IP} "docker network create nginxproxyman 2>/dev/null; mkdir -p ${VPS_DESTINATION}"
+ssh -i ~/.ssh/id_rsa_oracle ${VPS_USER}@${VPS_IP} "docker network create nginxproxyman 2>/dev/null; mkdir -p ${VPS_DESTINATION}"
 # Garante que o diretorio exista e envia os arquivos
 ssh -i ~/.ssh/id_rsa_oracle ${VPS_USER}@${VPS_IP} "mkdir -p ${VPS_DESTINATION}"
 scp -i ~/.ssh/id_rsa_oracle docker-compose.yml website_image.tar ${VPS_USER}@${VPS_IP}:${VPS_DESTINATION} || TRANSFER_SUCCESS=false
