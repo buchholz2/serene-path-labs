@@ -29,10 +29,10 @@ GIT_OUTPUT=$(git pull origin main 2>&1)
 log_message "$GIT_OUTPUT"
 
 # Se nao houver alteracao, sai (Opcional: comente se quiser forcar o deploy)
-if echo "$GIT_OUTPUT" | grep -q "Already up to date."; then
-    log_message "Nenhuma alteracao no Git. Pipeline encerrado."
-    exit 0
-fi
+#if echo "$GIT_OUTPUT" | grep -q "Already up to date."; then
+#    log_message "Nenhuma alteracao no Git. Pipeline encerrado."
+#    exit 0
+#fi
 
 # --- 2. Buildar a Imagem ---
 log_message "Alteracoes detectadas. Iniciando Docker Compose Build..."
