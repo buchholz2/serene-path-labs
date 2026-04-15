@@ -8,7 +8,7 @@ Landing page profissional de psicologia com foco em conversao para atendimento o
 - Vite 5
 - Tailwind CSS
 - i18n simples (PT/EN via contexto React)
-- API Node.js + Express para envio de contato por email (SMTP)
+- API Node.js + Express para envio de contato por email (Resend)
 
 ## Funcionalidades
 
@@ -36,7 +36,7 @@ API local: `http://localhost:3001`
 ### Configuracao da API de email
 
 1. Crie um arquivo `.env` na raiz (pode copiar de `.env.example`).
-2. Preencha `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, `PSYCHOLOGIST_EMAIL` e `MAIL_FROM`.
+2. Preencha `RESEND_API_KEY`, `MAIL_TO` e `MAIL_FROM`.
 3. Teste a saude da API:
 
 ```bash
@@ -47,7 +47,7 @@ curl http://localhost:3001/api/health
 
 ```bash
 cp .env.example .env
-# edite as variaveis SMTP no .env
+# edite as variaveis do Resend no .env
 docker compose up -d --build
 ```
 

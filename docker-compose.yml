@@ -8,12 +8,8 @@ services:
     restart: always
     environment:
       - PORT=3001
-      - SMTP_HOST=${SMTP_HOST}
-      - SMTP_PORT=${SMTP_PORT}
-      - SMTP_SECURE=${SMTP_SECURE}
-      - SMTP_USER=${SMTP_USER}
-      - SMTP_PASS=${SMTP_PASS}
-      - PSYCHOLOGIST_EMAIL=${PSYCHOLOGIST_EMAIL}
+      - RESEND_API_KEY=${RESEND_API_KEY}
+      - MAIL_TO=${MAIL_TO}
       - MAIL_FROM=${MAIL_FROM}
     networks:
       - nginxproxyman

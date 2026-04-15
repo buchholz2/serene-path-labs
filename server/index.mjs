@@ -1,6 +1,6 @@
 import "dotenv/config";
 import express from "express";
-import nodemailer from "nodemailer";
+import { Resend } from "resend";
 import { z } from "zod";
 
 const app = express();
@@ -9,6 +9,7 @@ const RATE_LIMIT_WINDOW_MS = 15 * 60 * 1000;
 const RATE_LIMIT_MAX_REQUESTS = 8;
 
 const requestsByIp = new Map();
+let resendClient;
 
 app.use(express.json({ limit: "100kb" }));
 
@@ -22,8 +23,6 @@ const contactSchema = z.object({
   lang: z.enum(["pt", "en"]).optional().default("pt"),
   website: z.string().trim().max(200).optional().default(""),
 });
-
-let transporter;
 
 function getClientIp(req) {
   const forwardedFor = req.headers["x-forwarded-for"];
@@ -50,25 +49,30 @@ function isAllowedByRateLimit(ip) {
   return true;
 }
 
-function validateSmtpConfig() {
-  const requiredVars = ["SMTP_HOST", "SMTP_PORT", "SMTP_USER", "SMTP_PASS", "PSYCHOLOGIST_EMAIL"];
-  return requiredVars.filter((name) => !process.env[name]);
+function getMailTo() {
+  return process.env.MAIL_TO || process.env.PSYCHOLOGIST_EMAIL || "";
 }
 
-function getTransporter() {
-  if (!transporter) {
-    transporter = nodemailer.createTransport({
-      host: process.env.SMTP_HOST,
-      port: Number(process.env.SMTP_PORT ?? 587),
-      secure: process.env.SMTP_SECURE === "true",
-      auth: {
-        user: process.env.SMTP_USER,
-        pass: process.env.SMTP_PASS,
-      },
-    });
+function validateResendConfig() {
+  const missing = [];
+
+  if (!process.env.RESEND_API_KEY) {
+    missing.push("RESEND_API_KEY");
   }
 
-  return transporter;
+  if (!getMailTo()) {
+    missing.push("MAIL_TO");
+  }
+
+  return missing;
+}
+
+function getResendClient() {
+  if (!resendClient) {
+    resendClient = new Resend(process.env.RESEND_API_KEY);
+  }
+
+  return resendClient;
 }
 
 function escapeHtml(value) {
@@ -142,12 +146,13 @@ function buildMailBody(data, clientIp) {
 }
 
 app.get("/api/health", (_req, res) => {
-  const missing = validateSmtpConfig();
+  const missing = validateResendConfig();
 
   res.status(200).json({
     ok: true,
     service: "contact-api",
-    smtpConfigured: missing.length === 0,
+    resendConfigured: missing.length === 0,
+    mailTo: getMailTo(),
     missingEnv: missing,
   });
 });
@@ -178,10 +183,10 @@ app.post("/api/contact", async (req, res) => {
     return res.status(200).json({ ok: true });
   }
 
-  const missingConfig = validateSmtpConfig();
+  const missingConfig = validateResendConfig();
 
   if (missingConfig.length > 0) {
-    console.error("[contact-api] Missing SMTP env vars:", missingConfig.join(", "));
+    console.error("[contact-api] Missing Resend env vars:", missingConfig.join(", "));
 
     return res.status(500).json({
       ok: false,
@@ -196,14 +201,23 @@ app.post("/api/contact", async (req, res) => {
   const { text, html } = buildMailBody(data, clientIp);
 
   try {
-    await getTransporter().sendMail({
-      from: process.env.MAIL_FROM || process.env.SMTP_USER,
-      to: process.env.PSYCHOLOGIST_EMAIL,
-      replyTo: data.email,
+    const { error } = await getResendClient().emails.send({
+      from: process.env.MAIL_FROM || "Site Arnaldo <onboarding@resend.dev>",
+      to: [getMailTo()],
+      reply_to: data.email,
       subject,
       text,
       html,
     });
+
+    if (error) {
+      console.error("[contact-api] Resend error:", error);
+
+      return res.status(502).json({
+        ok: false,
+        error: "email_send_failed",
+      });
+    }
 
     return res.status(200).json({ ok: true });
   } catch (error) {
