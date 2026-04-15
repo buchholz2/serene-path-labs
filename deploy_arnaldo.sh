@@ -47,21 +47,14 @@ fi
 # --- 3. Exportar a Imagem para Arquivo .tar ---
 log_message "Exportando imagem para arquivo .tar..."
 
-# Ajuste o nome da imagem conforme definido no seu docker-compose.yml
 WEB_IMAGE="site-arnaldo-web:latest"
 API_IMAGE="site-arnaldo-api:latest"
 
-if docker save -o website_image.tar $WEB_IMAGE; then
-    log_message "Imagem (.tar) salva com sucesso."
+# Salva ambas as imagens em um único arquivo
+if docker save -o website_images.tar $WEB_IMAGE $API_IMAGE; then
+    log_message "Imagens (Web e API) salvas com sucesso em website_images.tar."
 else
-    log_message "ERRO: Falha ao salvar a imagem."
-    exit 1
-fi
-
-if docker save -o api_image.tar $API_IMAGE; then
-    log_message "Imagem da API (.tar) salva com sucesso."
-else
-    log_message "ERRO: Falha ao salvar a imagem da API."
+    log_message "ERRO: Falha ao salvar as imagens."
     exit 1
 fi
 
@@ -81,8 +74,8 @@ fi
 ssh -i ~/.ssh/id_rsa_oracle ${VPS_USER}@${VPS_IP} "docker network create nginxproxyman 2>/dev/null; mkdir -p ${VPS_DESTINATION}"
 # Garante que o diretorio exista e envia os arquivos
 ssh -i ~/.ssh/id_rsa_oracle ${VPS_USER}@${VPS_IP} "mkdir -p ${VPS_DESTINATION}"
-scp -i ~/.ssh/id_rsa_oracle docker-compose.yml .env website_image.tar api_image.tar ${VPS_USER}@${VPS_IP}:${VPS_DESTINATION} || TRANSFER_SUCCESS=false
-
+#scp -i ~/.ssh/id_rsa_oracle docker-compose.yml .env website_image.tar api_image.tar ${VPS_USER}@${VPS_IP}:${VPS_DESTINATION} || TRANSFER_SUCCESS=false
+scp -i ~/.ssh/id_rsa_oracle docker-compose.yml .env website_images.tar ${VPS_USER}@${VPS_IP}:${VPS_DESTINATION} || TRANSFER_SUCCESS=false
 if ! $TRANSFER_SUCCESS; then
     log_message "ERRO FATAL: Falha na transferencia SCP."
     exit 1
@@ -93,16 +86,27 @@ log_message "Acionando deploy remoto na VPS Oracle..."
 
 DEPLOY_COMMAND="
   cd ${VPS_DESTINATION} &&
-  echo 'Carregando imagem...' &&
-  docker load -i website_image.tar &&
-  echo 'Carregando imagem da API...' &&
-  docker load -i api_image.tar &&
-  echo 'Subindo container...' &&
+  echo 'Carregando imagens (Web e API)...' &&
+  docker load -i website_images.tar &&
+  echo 'Subindo containers...' &&
   docker compose --env-file .env up -d --force-recreate &&
-  echo 'Limpando arquivos .tar...' &&
-  rm website_image.tar api_image.tar &&
+  echo 'Limpando arquivo .tar...' &&
+  rm website_images.tar &&
   echo 'Deploy remoto concluido.'
 "
+
+#DEPLOY_COMMAND="
+#  cd ${VPS_DESTINATION} &&
+#  echo 'Carregando imagem...' &&
+#  docker load -i website_image.tar &&
+#  echo 'Carregando imagem da API...' &&
+#  docker load -i api_image.tar &&
+#  echo 'Subindo container...' &&
+#  docker compose --env-file .env up -d --force-recreate &&
+#  echo 'Limpando arquivos .tar...' &&
+#  rm website_image.tar api_image.tar &&
+#  echo 'Deploy remoto concluido.'
+#"
 
 if ssh -i ~/.ssh/id_rsa_oracle ${VPS_USER}@${VPS_IP} "${DEPLOY_COMMAND}"; then
     log_message "Deploy remoto concluido com sucesso."
