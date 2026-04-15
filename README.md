@@ -23,21 +23,21 @@ Landing page profissional de psicologia com foco em conversao para atendimento o
 
 ```bash
 npm install
-# terminal 1
-npm run dev:api
-
-# terminal 2
 npm run dev
 ```
 
 Aplicacao em desenvolvimento: `http://localhost:8080`
 API local: `http://localhost:3001`
 
+`npm run dev` sobe frontend + API juntos.  
+Se quiser subir separado, use `npm run dev:web` e `npm run dev:api`.
+
 ### Configuracao da API de email
 
 1. Crie um arquivo `.env` na raiz (pode copiar de `.env.example`).
 2. Preencha `RESEND_API_KEY`, `MAIL_TO` e `MAIL_FROM`.
-3. Teste a saude da API:
+3. Para envio em producao deste projeto, use `MAIL_TO=psicologoantunes@gmail.com`.
+4. Teste a saude da API:
 
 ```bash
 curl http://localhost:3001/api/health
@@ -53,7 +53,8 @@ docker compose up -d --build
 
 ## Scripts disponiveis
 
-- `npm run dev`: inicia o servidor local
+- `npm run dev`: inicia frontend + API juntos
+- `npm run dev:web`: inicia apenas o frontend
 - `npm run dev:api`: inicia a API de contato local em modo watch
 - `npm run start:api`: inicia a API de contato em producao
 - `npm run build`: gera build de producao
