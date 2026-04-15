@@ -35,7 +35,7 @@ export default function Footer() {
               rel="noopener noreferrer"
               className="flex items-center gap-2 hover:text-background transition-colors"
             >
-              <span className="text-sm">(41) 99168-1082</span>
+              <span className="text-sm">{t("contact.whatsappNumber")}</span>
             </a>
           </div>
         </div>

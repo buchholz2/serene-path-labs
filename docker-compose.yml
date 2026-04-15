@@ -1,9 +1,30 @@
 services:
+  api:
+    container_name: site-arnaldo-api
+    build:
+      context: .
+      dockerfile: Dockerfile.api
+    image: site-arnaldo-api:latest
+    restart: always
+    environment:
+      - PORT=3001
+      - SMTP_HOST=${SMTP_HOST}
+      - SMTP_PORT=${SMTP_PORT}
+      - SMTP_SECURE=${SMTP_SECURE}
+      - SMTP_USER=${SMTP_USER}
+      - SMTP_PASS=${SMTP_PASS}
+      - PSYCHOLOGIST_EMAIL=${PSYCHOLOGIST_EMAIL}
+      - MAIL_FROM=${MAIL_FROM}
+    networks:
+      - nginxproxyman
+
   arnaldo-web:
     container_name: site-arnaldo-web
     build: .
     image: site-arnaldo-web:latest
     restart: always
+    depends_on:
+      - api
     networks:
       - nginxproxyman
 

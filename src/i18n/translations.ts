@@ -130,6 +130,7 @@ export const translations = {
   "contact.namePlaceholder": { pt: "Seu nome", en: "Your name" },
   "contact.email": { pt: "Email", en: "Email" },
   "contact.phone": { pt: "Telefone / WhatsApp", en: "Phone / WhatsApp" },
+  "contact.phonePlaceholder": { pt: "(41) 98871-3305", en: "+55 41 98871-3305" },
   "contact.helpLabel": { pt: "Em que posso te ajudar?", en: "How can I help you?" },
   "contact.helpHint": { pt: "(selecione uma ou mais opções)", en: "(select one or more options)" },
   "contact.timesLabel": { pt: "Horários de preferência", en: "Preferred times" },
@@ -141,14 +142,32 @@ export const translations = {
     en: "Tell me a bit about what you're looking for...",
   },
   "contact.submit": { pt: "Enviar Solicitação", en: "Send Request" },
+  "contact.submitLoading": { pt: "Enviando...", en: "Sending..." },
+  "contact.sendError": {
+    pt: "Nao consegui enviar agora. Tente novamente em instantes.",
+    en: "I could not send it right now. Please try again in a moment.",
+  },
+  "contact.sendTooManyRequests": {
+    pt: "Muitas tentativas seguidas. Aguarde alguns minutos e tente novamente.",
+    en: "Too many attempts in a short time. Please wait a few minutes and try again.",
+  },
+  "contact.fallbackGoogleForm": {
+    pt: "Se preferir, voce pode preencher diretamente pelo Google Forms:",
+    en: "If you prefer, you can fill it directly in Google Forms:",
+  },
+  "contact.openGoogleForm": { pt: "Abrir Google Forms", en: "Open Google Forms" },
   "contact.whatsappAlt": {
     pt: "Ou entre em contato pelo WhatsApp:",
     en: "Or reach out via WhatsApp:",
   },
-  "contact.successTitle": { pt: "Mensagem preparada!", en: "Message prepared!" },
+  "contact.whatsappNumber": {
+    pt: "(41) 98871-3305",
+    en: "+55 41 98871-3305",
+  },
+  "contact.successTitle": { pt: "Mensagem enviada!", en: "Message sent!" },
   "contact.successMsg": {
-    pt: "Seu aplicativo de email deve ter aberto com os dados preenchidos. Caso não tenha aberto, entre em contato pelo WhatsApp: (41) 99168-1082.",
-    en: "Your email app should have opened with the data filled in. If it didn't, contact via WhatsApp: (41) 99168-1082.",
+    pt: "Recebi seus dados com sucesso. Vou entrar em contato para confirmar seu agendamento.",
+    en: "I received your message successfully. I will reach out to confirm your appointment.",
   },
   "contact.newMessage": { pt: "Enviar nova mensagem", en: "Send new message" },
 

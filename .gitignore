@@ -23,3 +23,7 @@ dist-ssr
 *.sln
 *.sw?
 website_image.tar
+api_image.tar
+.env
+.env.*
+!.env.example

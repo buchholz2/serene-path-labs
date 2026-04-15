@@ -49,11 +49,19 @@ log_message "Exportando imagem para arquivo .tar..."
 
 # Ajuste o nome da imagem conforme definido no seu docker-compose.yml
 WEB_IMAGE="site-arnaldo-web:latest"
+API_IMAGE="site-arnaldo-api:latest"
 
 if docker save -o website_image.tar $WEB_IMAGE; then
     log_message "Imagem (.tar) salva com sucesso."
 else
     log_message "ERRO: Falha ao salvar a imagem."
+    exit 1
+fi
+
+if docker save -o api_image.tar $API_IMAGE; then
+    log_message "Imagem da API (.tar) salva com sucesso."
+else
+    log_message "ERRO: Falha ao salvar a imagem da API."
     exit 1
 fi
 
@@ -65,7 +73,7 @@ TRANSFER_SUCCESS=true
 ssh -i ~/.ssh/id_rsa_oracle ${VPS_USER}@${VPS_IP} "docker network create nginxproxyman 2>/dev/null; mkdir -p ${VPS_DESTINATION}"
 # Garante que o diretorio exista e envia os arquivos
 ssh -i ~/.ssh/id_rsa_oracle ${VPS_USER}@${VPS_IP} "mkdir -p ${VPS_DESTINATION}"
-scp -i ~/.ssh/id_rsa_oracle docker-compose.yml website_image.tar ${VPS_USER}@${VPS_IP}:${VPS_DESTINATION} || TRANSFER_SUCCESS=false
+scp -i ~/.ssh/id_rsa_oracle docker-compose.yml website_image.tar api_image.tar ${VPS_USER}@${VPS_IP}:${VPS_DESTINATION} || TRANSFER_SUCCESS=false
 
 if ! $TRANSFER_SUCCESS; then
     log_message "ERRO FATAL: Falha na transferencia SCP."
@@ -79,10 +87,12 @@ DEPLOY_COMMAND="
   cd ${VPS_DESTINATION} &&
   echo 'Carregando imagem...' &&
   docker load -i website_image.tar &&
+  echo 'Carregando imagem da API...' &&
+  docker load -i api_image.tar &&
   echo 'Subindo container...' &&
   docker compose up -d --force-recreate &&
-  echo 'Limpando arquivo .tar...' &&
-  rm website_image.tar &&
+  echo 'Limpando arquivos .tar...' &&
+  rm website_image.tar api_image.tar &&
   echo 'Deploy remoto concluido.'
 "
 

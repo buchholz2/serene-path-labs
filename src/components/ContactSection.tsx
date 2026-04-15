@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 import { useLanguage } from "@/i18n/LanguageContext";
-import { Send, CheckCircle } from "lucide-react";
+import { GOOGLE_FORM_URL } from "@/lib/constants";
+import { Send, CheckCircle, ExternalLink } from "lucide-react";
 import type { TranslationKey } from "@/i18n/translations";
 
 const serviceOptionKeys: TranslationKey[] = [
@@ -22,18 +23,21 @@ const timeOptionKeys: TranslationKey[] = [
 
 export default function ContactSection() {
   const { ref, isVisible } = useScrollAnimation();
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
   const [submitted, setSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     phone: "",
-    services: [] as string[],
-    preferredTimes: [] as string[],
+    services: [] as TranslationKey[],
+    preferredTimes: [] as TranslationKey[],
     message: "",
+    website: "",
   });
 
-  const toggleService = (service: string) => {
+  const toggleService = (service: TranslationKey) => {
     setFormData((prev) => ({
       ...prev,
       services: prev.services.includes(service)
@@ -42,7 +46,7 @@ export default function ContactSection() {
     }));
   };
 
-  const toggleTime = (time: string) => {
+  const toggleTime = (time: TranslationKey) => {
     setFormData((prev) => ({
       ...prev,
       preferredTimes: prev.preferredTimes.includes(time)
@@ -51,21 +55,60 @@ export default function ContactSection() {
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setErrorMessage(null);
+    setIsSubmitting(true);
 
-    const subject = encodeURIComponent("Solicitação de Agendamento - Psicólogo Arnaldo Antunes");
-    const body = encodeURIComponent(
-      `Nome: ${formData.name}\n` +
-      `Email: ${formData.email}\n` +
-      `Telefone: ${formData.phone}\n` +
-      `Áreas de interesse: ${formData.services.join(", ") || "Não informado"}\n` +
-      `Horários preferidos: ${formData.preferredTimes.join(", ") || "Não informado"}\n` +
-      `Mensagem: ${formData.message || "Sem mensagem adicional"}`
-    );
+    const payload = {
+      name: formData.name.trim(),
+      email: formData.email.trim(),
+      phone: formData.phone.trim(),
+      services: formData.services.map((key) => t(key)),
+      preferredTimes: formData.preferredTimes.map((key) => t(key)),
+      message: formData.message.trim(),
+      lang,
+      website: formData.website,
+    };
 
-    window.open(`mailto:contato@psicologoarnaldoantunes.com.br?subject=${subject}&body=${body}`, "_self");
-    setSubmitted(true);
+    try {
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (!response.ok) {
+        const data = await response.json().catch(() => null);
+
+        if (data?.error === "too_many_requests") {
+          throw new Error("too_many_requests");
+        }
+
+        throw new Error("send_failed");
+      }
+
+      setSubmitted(true);
+      setFormData({
+        name: "",
+        email: "",
+        phone: "",
+        services: [],
+        preferredTimes: [],
+        message: "",
+        website: "",
+      });
+    } catch (error) {
+      if (error instanceof Error && error.message === "too_many_requests") {
+        setErrorMessage(t("contact.sendTooManyRequests"));
+      } else {
+        setErrorMessage(t("contact.sendError"));
+      }
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   if (submitted) {
@@ -79,6 +122,17 @@ export default function ContactSection() {
           </h2>
           <p className="text-muted-foreground text-lg mb-6">
             {t("contact.successMsg")}
+          </p>
+          <p className="text-sm text-muted-foreground mb-6">
+            {t("contact.whatsappAlt")}{" "}
+            <a
+              href="https://wa.me/5541988713305"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-primary-dark hover:underline"
+            >
+              {t("contact.whatsappNumber")}
+            </a>
           </p>
           <button
             onClick={() => setSubmitted(false)}
@@ -116,12 +170,26 @@ export default function ContactSection() {
         </div>
 
         <form onSubmit={handleSubmit} className="bg-card rounded-3xl p-8 md:p-10 shadow-lg border border-border space-y-6">
+          <div className="hidden" aria-hidden="true">
+            <label htmlFor="website">Website</label>
+            <input
+              id="website"
+              type="text"
+              tabIndex={-1}
+              autoComplete="off"
+              value={formData.website}
+              onChange={(e) => setFormData({ ...formData, website: e.target.value })}
+            />
+          </div>
+
           <div className="grid sm:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-foreground mb-2">{t("contact.name")} *</label>
               <input
                 type="text"
                 required
+                minLength={2}
+                autoComplete="name"
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                 className="w-full px-4 py-3 rounded-xl border border-border bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all"
@@ -133,6 +201,7 @@ export default function ContactSection() {
               <input
                 type="email"
                 required
+                autoComplete="email"
                 value={formData.email}
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                 className="w-full px-4 py-3 rounded-xl border border-border bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all"
@@ -145,10 +214,12 @@ export default function ContactSection() {
             <label className="block text-sm font-medium text-foreground mb-2">{t("contact.phone")}</label>
             <input
               type="tel"
+              autoComplete="tel"
+              inputMode="tel"
               value={formData.phone}
               onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
               className="w-full px-4 py-3 rounded-xl border border-border bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all"
-              placeholder="(XX) XXXXX-XXXX"
+              placeholder={t("contact.phonePlaceholder")}
             />
           </div>
 
@@ -163,9 +234,9 @@ export default function ContactSection() {
                   <button
                     key={key}
                     type="button"
-                    onClick={() => toggleService(label)}
+                    onClick={() => toggleService(key)}
                     className={`px-4 py-2 rounded-full text-sm font-medium border transition-all ${
-                      formData.services.includes(label)
+                      formData.services.includes(key)
                         ? "bg-primary text-primary-foreground border-primary"
                         : "bg-background text-muted-foreground border-border hover:border-primary/50"
                     }`}
@@ -188,9 +259,9 @@ export default function ContactSection() {
                   <button
                     key={key}
                     type="button"
-                    onClick={() => toggleTime(label)}
+                    onClick={() => toggleTime(key)}
                     className={`px-4 py-2 rounded-full text-sm font-medium border transition-all ${
-                      formData.preferredTimes.includes(label)
+                      formData.preferredTimes.includes(key)
                         ? "bg-primary text-primary-foreground border-primary"
                         : "bg-background text-muted-foreground border-border hover:border-primary/50"
                     }`}
@@ -209,22 +280,42 @@ export default function ContactSection() {
             <textarea
               value={formData.message}
               onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+              maxLength={2000}
               rows={4}
               className="w-full px-4 py-3 rounded-xl border border-border bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all resize-none"
               placeholder={t("contact.messagePlaceholder")}
             />
           </div>
 
+          {errorMessage ? (
+            <div className="rounded-xl border border-destructive/30 bg-destructive/5 px-4 py-3 text-sm text-destructive">
+              {errorMessage}
+            </div>
+          ) : null}
+
           <button
             type="submit"
-            className="w-full bg-primary text-primary-foreground py-4 rounded-full font-medium text-lg hover:bg-primary-dark transition-colors shadow-lg shadow-primary/20 flex items-center justify-center gap-2"
+            disabled={isSubmitting}
+            className="w-full bg-primary text-primary-foreground py-4 rounded-full font-medium text-lg hover:bg-primary-dark transition-colors shadow-lg shadow-primary/20 flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
           >
             <Send className="w-5 h-5" />
-            {t("contact.submit")}
+            {isSubmitting ? t("contact.submitLoading") : t("contact.submit")}
           </button>
 
           <p className="text-center text-xs text-muted-foreground">
-            {t("contact.whatsappAlt")} <a href="https://wa.me/5541991681082" target="_blank" rel="noopener noreferrer" className="text-primary-dark hover:underline">(41) 99168-1082</a>
+            {t("contact.fallbackGoogleForm")}{" "}
+            <a
+              href={GOOGLE_FORM_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-primary-dark hover:underline inline-flex items-center gap-1"
+            >
+              {t("contact.openGoogleForm")} <ExternalLink className="w-3.5 h-3.5" />
+            </a>
+          </p>
+
+          <p className="text-center text-xs text-muted-foreground">
+            {t("contact.whatsappAlt")} <a href="https://wa.me/5541988713305" target="_blank" rel="noopener noreferrer" className="text-primary-dark hover:underline">{t("contact.whatsappNumber")}</a>
           </p>
         </form>
       </div>
