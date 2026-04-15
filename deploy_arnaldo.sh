@@ -62,10 +62,10 @@ log_message "Iniciando transferencia para a VPS Oracle..."
 
 TRANSFER_SUCCESS=true
 # Garante que a rede e a pasta existam na Oracle
-ssh ${VPS_USER}@${VPS_IP} "docker network create nginxproxyman 2>/dev/null; mkdir -p ${VPS_DESTINATION}"
+ssh-i ~/.ssh/id_rsa_oracle ${VPS_USER}@${VPS_IP} "docker network create nginxproxyman 2>/dev/null; mkdir -p ${VPS_DESTINATION}"
 # Garante que o diretorio exista e envia os arquivos
-ssh ${VPS_USER}@${VPS_IP} "mkdir -p ${VPS_DESTINATION}"
-scp docker-compose.yml website_image.tar ${VPS_USER}@${VPS_IP}:${VPS_DESTINATION} || TRANSFER_SUCCESS=false
+ssh -i ~/.ssh/id_rsa_oracle ${VPS_USER}@${VPS_IP} "mkdir -p ${VPS_DESTINATION}"
+scp -i ~/.ssh/id_rsa_oracle docker-compose.yml website_image.tar ${VPS_USER}@${VPS_IP}:${VPS_DESTINATION} || TRANSFER_SUCCESS=false
 
 if ! $TRANSFER_SUCCESS; then
     log_message "ERRO FATAL: Falha na transferencia SCP."
@@ -86,7 +86,7 @@ DEPLOY_COMMAND="
   echo 'Deploy remoto concluido.'
 "
 
-if ssh ${VPS_USER}@${VPS_IP} "${DEPLOY_COMMAND}"; then
+if ssh -i ~/.ssh/id_rsa_oracle ${VPS_USER}@${VPS_IP} "${DEPLOY_COMMAND}"; then
     log_message "Deploy remoto concluido com sucesso."
 else
     log_message "ERRO: Falha no deploy remoto."
